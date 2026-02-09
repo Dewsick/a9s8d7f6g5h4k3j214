@@ -99,7 +99,15 @@ body {
 .final-text{font-size:34px;margin-top:20px;animation:fade 1s;text-shadow:0 0 20px #fff;}
 
 .firework{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:20;}
-.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;animation:spark 1.2s linear infinite;}
+.spark{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  animation:spark 1.2s linear infinite;
+  box-shadow: 0 0 8px currentColor;
+}
+
 @keyframes spark{from{transform:translate(0,0)}to{transform:translate(var(--x),var(--y)) scale(0)}}
 
 @media (max-width:600px){
@@ -445,23 +453,33 @@ function finalScreen(){
 }
 
 function fireworks(){
-  const fw=document.createElement('div');
-  fw.className='firework';
+  const colors = ['#ff3b30', '#ffd700', '#4facfe', '#ffffff', '#ff6b81'];
+
+  const fw = document.createElement('div');
+  fw.className = 'firework';
   document.body.appendChild(fw);
-  setInterval(()=>{
-    const x=Math.random()*window.innerWidth;
-    const y=Math.random()*window.innerHeight/2;
-    for(let i=0;i<30;i++){
-      const s=document.createElement('div');
-      s.className='spark';
-      s.style.left=x+'px';
-      s.style.top=y+'px';
-      s.style.setProperty('--x',(Math.random()*300-150)+'px');
-      s.style.setProperty('--y',(Math.random()*300-150)+'px');
+
+  setInterval(() => {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight / 2;
+
+    for(let i = 0; i < 36; i++){
+      const s = document.createElement('div');
+      s.className = 'spark';
+      s.style.left = x + 'px';
+      s.style.top = y + 'px';
+
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      s.style.color = color;
+      s.style.background = color;
+
+      s.style.setProperty('--x', (Math.random()*300 - 150) + 'px');
+      s.style.setProperty('--y', (Math.random()*300 - 150) + 'px');
+
       fw.appendChild(s);
-      setTimeout(()=>s.remove(),1200);
+      setTimeout(() => s.remove(), 1300);
     }
-  },500);
+  }, 450);
 }
 
 function startFlash(){
@@ -474,4 +492,5 @@ showHeart();
 </script>
 </body>
 </html>
+
 
