@@ -156,7 +156,7 @@ body{margin:0;font-family:Arial,sans-serif;background:
   opacity:0;
   pointer-events:none;
   z-index:999999;
-  animation: flash 2s infinite;
+  animation: flash 2.5s infinite;
 }
 
 
@@ -214,7 +214,7 @@ function checkPassword(){
 
   if(input.value === PASSWORD){
     document.getElementById("lockScreen").style.display="none";
-	bgm.volume = 0.35;
+	bgm.volume = 0.21;
     bgm.play().catch(()=>{});
   } else {
     error.style.display="block";
@@ -453,3 +453,4 @@ showHeart();
 </script>
 </body>
 </html>
+
