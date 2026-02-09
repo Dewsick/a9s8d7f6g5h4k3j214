@@ -149,30 +149,6 @@ body{margin:0;font-family:Arial,sans-serif;background:
   display:none;
 }
 
-.flash{
-  position:fixed;
-  inset:0;
-  background:white;
-  opacity:0;
-  pointer-events:none;
-  z-index:999999;
-  animation: flash 2.5s infinite;
-}
-
-
-@keyframes flash{
-  0%{opacity:0}
-  15%{opacity:0.2}
-  20%{opacity:0}
-  45%{opacity:0.15}
-  50%{opacity:0}
-  75%{opacity:0.07}
-  80%{opacity:0}
-  100%{opacity:0}
-}
-
-
-
 </style>
 </head>
 <body>
@@ -191,7 +167,7 @@ body{margin:0;font-family:Arial,sans-serif;background:
   <div class="center" id="center"></div>
 </div>
 
-<audio id="boom" src="fireworks.mp3"></audio>
+<audio id="boom" src="fireworks.mp3" loop></audio>
 <audio id="bgm" src="music.mp3" loop></audio>
 
 
@@ -205,6 +181,7 @@ let musicStarted = false;
 
 const center=document.getElementById('center');
 const boom=document.getElementById('boom');
+	boom.volume = 0.2; // 35% громкости
 const bgm = document.getElementById('bgm');
 const PASSWORD = "валентинка"; // ← ЗДЕСЬ СТАВИШЬ СВОЙ ПАРОЛЬ
 
@@ -214,7 +191,7 @@ function checkPassword(){
 
   if(input.value === PASSWORD){
     document.getElementById("lockScreen").style.display="none";
-	bgm.volume = 0.21;
+	bgm.volume = 0.35;
     bgm.play().catch(()=>{});
   } else {
     error.style.display="block";
@@ -318,52 +295,11 @@ function bonus(img1,text,img2=null){
 }
 
 function error404(){
-  center.innerHTML=`
-    <div class='overlay'>
-      Ошибка 404<br>
-      <small>Система дала сбой. Слишком много чувств.</small>
-      <button style='display:none'>Продолжить</button>
-    </div>
-  `;
-
+  center.innerHTML=`<div class='overlay'>Ошибка 404<br><small>Система дала сбой. Слишком много чувств.</small><button style='display:none'>Продолжить</button></div>`;
   const btn=center.querySelector('button');
   setTimeout(()=>btn.style.display='block',5000);
-
-  btn.onclick = () => {
-    // ❤️ Поднимающиеся сердечки
-    for (let i = 0; i < 20; i++) {
-        const heart = document.createElement('div');
-        heart.innerText = '❤️';
-        heart.style.position = 'fixed';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.bottom = '0';
-        const size = 14 + Math.random() * 16;
-        heart.style.fontSize = size + 'px';
-        heart.style.pointerEvents = 'none';
-        heart.style.opacity = 1;
-        document.body.appendChild(heart);
-
-        const duration = 4000 + Math.random() * 3000;
-        const xMove = (Math.random() - 0.5) * 100;
-        const yMove = - (100 + Math.random() * 50);
-
-        heart.animate([
-            { transform: 'translate(0,0)', opacity: 1 },
-            { transform: `translate(${xMove}px, ${yMove}vh)`, opacity: 0 }
-        ], {
-            duration: duration,
-            easing: 'linear',
-            fill: 'forwards'
-        });
-
-        setTimeout(() => heart.remove(), duration);
-    }
-
-    locked = false;
-    showHeart();
-  };
+  btn.onclick=()=>{locked=false;showHeart()};
 }
-
 
 function deepMessage(){
   center.innerHTML=`<div class='overlay'>Аделин, ты стала для меня чем-то гораздо большим, чем просто девушка на расстоянии.<br><small>Я просто хотел, чтобы ты это знала.</small><button style='display:none'>Продолжить</button></div>`;
@@ -415,12 +351,9 @@ function finalScreen(){
   overlay.className='overlay';
   overlay.innerHTML=`<div class='final-text'>И Я ТЕБЯ ЛЮБЛЮ ❤️</div>`;
   document.getElementById('app').appendChild(overlay);
-
   boom.play();
   fireworks();
-  startFlash();
 }
-
 
 function fireworks(){
   const fw=document.createElement('div');
@@ -442,16 +375,7 @@ function fireworks(){
   },500);
 }
 
-function startFlash(){
-  const flash=document.createElement('div');
-  flash.className='flash';
-  document.body.appendChild(flash);
-}
-
-
 showHeart();
 </script>
 </body>
 </html>
-
-
