@@ -263,6 +263,7 @@ function showHeart(){
     const clickSound = document.getElementById('clickSound');
     clickSound.currentTime = 0; // чтобы можно было быстро кликать подряд
     clickSound.play().catch(()=>{});
+	clickSound.volume = 0.2;  
 
     // счетчик кликов подсказки
     hintClicks++;
@@ -473,3 +474,4 @@ showHeart();
 </script>
 </body>
 </html>
+
