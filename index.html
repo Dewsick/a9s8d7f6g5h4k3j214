@@ -203,7 +203,6 @@ let musicStarted = false;
 
 const center=document.getElementById('center');
 const boom=document.getElementById('boom');
-	boom.volume = 0.2; // 35% громкости
 const bgm = document.getElementById('bgm');
 const PASSWORD = "валентинка"; // ← ЗДЕСЬ СТАВИШЬ СВОЙ ПАРОЛЬ
 
@@ -213,7 +212,7 @@ function checkPassword(){
 
   if(input.value === PASSWORD){
     document.getElementById("lockScreen").style.display="none";
-	bgm.volume = 0.9;
+	bgm.volume = 0.2;
     bgm.play().catch(()=>{});
   } else {
     error.style.display="block";
@@ -450,6 +449,7 @@ showHeart();
 </script>
 </body>
 </html>
+
 
 
 
