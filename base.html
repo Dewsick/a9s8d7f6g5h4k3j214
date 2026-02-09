@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>❤️ Для тебя</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial,sans-serif;background:
+  linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
+  url('https://images.pexels.com/photos/5874620/pexels-photo-5874620.jpeg') center/cover no-repeat;height:100vh;display:flex;justify-content:center;align-items:center;overflow:hidden;color:#fff;text-align:center;}
+#app{width:100%;height:100%;position:relative;}
+.center{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;}
+
+.heart-wrapper{cursor:pointer;}
+.heart{
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  outline: none;
+  font-size: 80px;
+  background: linear-gradient(45deg, #ff3b30, #ff6b81);
+  -webkit-background-clip: text;
+  color: rgba(255,75,87,0.7);
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  transform-origin: center;
+  display: inline-block;
+}
+.heart.pulsing{animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+.message{font-size:26px;animation:fade .6s;max-width:90%;margin-top:12px;}
+@keyframes fade{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+.bonus{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.photo-stack{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.photo{max-width:55vw;max-height:40vh;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.45);opacity:0;transform:scale(0.6);transition:.9s;}
+.photo.first{opacity:1;transform:scale(1);}
+.photo.second.show{opacity:1;transform:scale(1);filter:blur(0);}
+
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.92);display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:26px;z-index:10;animation:fade .6s;padding:20px;}
+.overlay small{opacity:.7;margin-top:12px;}
+
+.overlay button,
+.bonus button{
+  margin-top:20px;
+  padding:12px 28px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(45deg,#ff6b81,#ff4757);
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+  transition:transform .25s;
+  box-shadow:0 6px 20px rgba(0,0,0,.45);
+  font-weight:bold;
+}
+
+.overlay button:hover,
+.bonus button:hover{transform:scale(1.05);}
+.overlay button:active,
+.bonus button:active{transform:scale(0.95);}
+
+.hint{
+  position:absolute;
+  top:18%;
+  font-size:20px;
+  opacity:.85;
+  animation: hintPulse 1.2s ease-in-out infinite;
+  pointer-events:none;
+}
+
+@keyframes hintPulse{
+  0%{transform:scale(1);opacity:.6}
+  50%{transform:scale(1.08);opacity:1}
+  100%{transform:scale(1);opacity:.6}
+}
+
+.petal{position:absolute;top:-50px;font-size:28px;animation:petal 6s linear infinite;pointer-events:none;}
+@keyframes petal{from{transform:translateY(0)}to{transform:translateY(110vh) rotate(360deg)}}
+
+.game{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;}
+.letter-game{width:52px;height:52px;background:rgba(255,255,255,.25);border-radius:10px;display:flex;justify-content:center;align-items:center;font-size:26px;font-weight:bold;cursor:pointer;transition:.3s;}
+.letter-game.correct{background:#2ecc71;}
+.letter-game.wrong{background:#e74c3c;}
+
+.final-text{font-size:34px;margin-top:20px;animation:fade 1s;text-shadow:0 0 20px #fff;}
+
+.firework{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:20;}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;animation:spark 1.2s linear infinite;}
+@keyframes spark{from{transform:translate(0,0)}to{transform:translate(var(--x),var(--y)) scale(0)}}
+
+@media (max-width:600px){
+  .photo{max-width:42vw;max-height:32vh}
+  .message{font-size:20px}
+  .heart{font-size:64px}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="center" id="center"></div>
+</div>
+
+<audio id="boom" src="https://assets.mixkit.co/music/493/493.mp3"></audio>
+
+<script>
+let step=0;
+let scale=1;
+let locked=false;
+let hintClicks=0;
+let hintRemoved=false;
+
+const center=document.getElementById('center');
+const boom=document.getElementById('boom');
+
+function showHeart(){
+  center.innerHTML = `
+    <div class='heart-wrapper'>
+      <div class='heart' id='heart'>❤</div>
+    </div>
+  `;
+
+  // вставляем подсказку только один раз в начале
+  if(!hintRemoved && !document.getElementById('hint')){
+    center.insertAdjacentHTML('afterbegin', `<div id="hint" class="hint">Нажимай на сердечко ❤️ Только не торопись!</div>`);
+  }
+
+  const heart=document.getElementById('heart');
+  const wrapper=heart.parentElement;
+  wrapper.style.transform = `scale(${scale})`;
+
+  wrapper.onclick = () => {
+    if(locked) return;
+    locked = true;
+
+    // счетчик кликов подсказки
+    hintClicks++;
+    if(hintClicks >= 2){
+      const h = document.getElementById('hint');
+      if(h) h.remove();
+      hintRemoved = true;
+    }
+
+    scale += 0.08;
+    wrapper.style.transform = `scale(${scale})`;
+
+    heart.classList.add('pulsing');
+    setTimeout(() => heart.classList.remove('pulsing'), 1000);
+
+    dropOneRose();
+
+    setTimeout(() => {
+      next();
+      locked = false;
+    }, 300);
+  };
+}
+
+function next(){
+  step++;
+  if([10,20,30,40,50].includes(step)){
+    locked=true;
+    special(step);
+  }
+}
+
+function special(n){
+  switch(n){
+    case 10: bonus('https://i.imgur.com/f3gSJBj.jpeg','Подожди… а она тут откуда?','https://i.imgur.com/jS0C7o4.jpeg'); break;
+    case 20: bonus('https://i.imgur.com/D0BGQXH.jpeg','Мыыыы. Классно да? Спасибо чату GPT 😁'); break;
+    case 30: error404(); break;
+    case 40: deepMessage(); break;
+    case 50: game(); break;
+  }
+}
+
+function bonus(img1,text,img2=null){
+  center.innerHTML=`
+    <div class="bonus">
+      <div class="photo-stack">
+        <img src="${img1}" class="photo first">
+      </div>
+      <div class="message">${text}</div>
+      <button style="display:none">Продолжить</button>
+    </div>
+  `;
+  if(step === 20){
+  const img = document.querySelector('.photo.first');
+  img.style.maxWidth = '75vw';   // ширина больше
+  img.style.maxHeight = '55vh';  // высота больше
+}
+
+  if(img2){
+    const stack=document.querySelector('.photo-stack');
+    setTimeout(()=>{
+      const img=document.createElement('img');
+      img.src=img2;
+      img.className='photo second';
+      stack.appendChild(img);
+      setTimeout(()=>img.classList.add('show'),50);
+    },1000);
+  }
+
+  const btn=center.querySelector('button');
+  setTimeout(()=>btn.style.display='block',5000);
+  btn.onclick=()=>{locked=false;showHeart()};
+}
+
+function error404(){
+  center.innerHTML=`<div class='overlay'>Ошибка 404<br><small>Система дала сбой. Слишком много чувств.</small><button style='display:none'>Продолжить</button></div>`;
+  const btn=center.querySelector('button');
+  setTimeout(()=>btn.style.display='block',5000);
+  btn.onclick=()=>{locked=false;showHeart()};
+}
+
+function deepMessage(){
+  center.innerHTML=`<div class='overlay'>Аделин, ты стала для меня чем-то гораздо большим, чем просто девушка на расстоянии.<br><small>Я просто хотел, чтобы ты это знала.</small><button style='display:none'>Продолжить</button></div>`;
+  const btn=center.querySelector('button');
+  setTimeout(()=>btn.style.display='block',5000);
+  btn.onclick=()=>{locked=false;showHeart()};
+}
+
+function dropOneRose(){
+  const p=document.createElement('div');
+  p.className='petal';
+  p.innerText='🌸';
+  p.style.left=Math.random()*100+'%';
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),7000);
+}
+
+function game(){
+  const target='ЛЮБЛЮДИМУ';
+  let index=0;
+  center.innerHTML=`<div class='message'>Попробуй написать фразу =)</div><div class='game' id='game'></div>`;
+  const box=document.getElementById('game');
+
+  target.split('').sort(()=>Math.random()-0.5).forEach(l=>{
+    const el=document.createElement('div');
+    el.className='letter-game';
+    el.textContent=l;
+    el.onclick=()=>{
+      if(l===target[index]){
+        el.classList.add('correct');
+        index++;
+        if(index===target.length) finishGame();
+      }else{
+        el.classList.add('wrong');
+        setTimeout(()=>el.classList.remove('wrong'),400);
+      }
+    };
+    box.appendChild(el);
+  });
+}
+
+function finishGame(){
+  center.innerHTML=`<div class='final-text'>ЛЮБЛЮ ДИМУ </div>`;
+  setTimeout(finalScreen,1500);
+}
+
+function finalScreen(){
+  const overlay=document.createElement('div');
+  overlay.className='overlay';
+  overlay.innerHTML=`<div class='final-text'>И Я ТЕБЯ ЛЮБЛЮ ❤️</div>`;
+  document.getElementById('app').appendChild(overlay);
+  boom.play();
+  fireworks();
+}
+
+function fireworks(){
+  const fw=document.createElement('div');
+  fw.className='firework';
+  document.body.appendChild(fw);
+  setInterval(()=>{
+    const x=Math.random()*window.innerWidth;
+    const y=Math.random()*window.innerHeight/2;
+    for(let i=0;i<30;i++){
+      const s=document.createElement('div');
+      s.className='spark';
+      s.style.left=x+'px';
+      s.style.top=y+'px';
+      s.style.setProperty('--x',(Math.random()*300-150)+'px');
+      s.style.setProperty('--y',(Math.random()*300-150)+'px');
+      fw.appendChild(s);
+      setTimeout(()=>s.remove(),1200);
+    }
+  },500);
+}
+
+showHeart();
+</script>
+</body>
+</html>
