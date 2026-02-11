@@ -403,7 +403,7 @@ function error404(){
 }
 
 function deepMessage(){
-  center.innerHTML=`<div class='overlay'>Аделин, ты стала для меня чем-то гораздо большим, чем просто девушка на расстоянии.<br><small>Я просто хотел, чтобы ты это знала.</small><button style='display:none'>Продолжить</button></div>`;
+  center.innerHTML=`<div class='overlay'>Аделин, ты стала для меня чем-то гораздо большим, чем просто девушка на расстоянии.<br><small>Я просто хотел, чтобы ты это знала. Я жду момента, когда мы сможем увидеться, и знаю, что ты тоже ждешь. Вместе мы сможем сделать этот день реальностью.</small><button style='display:none'>Продолжить</button></div>`;
   const btn=center.querySelector('button');
   setTimeout(()=>btn.style.display='block',5000);
   btn.onclick=()=>{locked=false;showHeart()};
@@ -499,6 +499,7 @@ showHeart();
 </script>
 </body>
 </html>
+
 
 
 
