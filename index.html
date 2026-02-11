@@ -107,15 +107,19 @@ body {
 }
 
 .spark{
-  opacity: 0;
   position:absolute;
-  width:6px;
-  height:6px;
+  width:8px;
+  height:8px;
   border-radius:50%;
-  filter: drop-shadow(0 0 8px currentColor)
-          drop-shadow(0 0 15px currentColor);	
-  animation: spark 1.3s ease-out forwards;
+  background: currentColor;
+  box-shadow:
+    0 0 10px currentColor,
+    0 0 20px currentColor,
+    0 0 40px currentColor,
+    0 0 60px currentColor;
+  animation:spark 1.3s ease-out forwards;
 }
+
 
 @keyframes spark {
   0% {
@@ -504,9 +508,9 @@ function fireworks(){
       fw.appendChild(s);
     }
 
-    setTimeout(() => fw.remove(), 1600);
+    setTimeout(() => fw.remove(), 1300);
 
-  }, 900);
+  }, 450);
 }
 
 
@@ -520,6 +524,7 @@ showHeart();
 </script>
 </body>
 </html>
+
 
 
 
